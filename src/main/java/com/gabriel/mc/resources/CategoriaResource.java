@@ -1,8 +1,5 @@
 package com.gabriel.mc.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.gabriel.mc.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
