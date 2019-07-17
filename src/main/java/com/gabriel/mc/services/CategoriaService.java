@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.gabriel.mc.domain.Categoria;
 import com.gabriel.mc.repositories.CategoriaRepository;
 
+import java.util.List;
+
 @Service
 public class CategoriaService {
 	
@@ -42,5 +44,9 @@ public class CategoriaService {
 		catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível excluir uma categoria que possui produtos.");
 		}
+	}
+
+	public List<Categoria> findAll() {
+		return repo.findAll();
 	}
 }
