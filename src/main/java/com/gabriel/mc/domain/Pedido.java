@@ -5,6 +5,8 @@ import com.gabriel.mc.domain.enums.EstadoPagamento;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Pedido implements Serializable {
@@ -25,6 +27,7 @@ public class Pedido implements Serializable {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
+    private Set<ItemPedido> itens = new HashSet<>();
     private Date instante;
 
     public Pedido() {
@@ -67,6 +70,14 @@ public class Pedido implements Serializable {
 
     public void setEnderecoEntrega(Endereco enderecoEntrega) {
         this.enderecoEntrega = enderecoEntrega;
+    }
+
+    public Set<ItemPedido> getItens() {
+        return itens;
+    }
+
+    public void setItens(Set<ItemPedido> itens) {
+        this.itens = itens;
     }
 
     @Override
