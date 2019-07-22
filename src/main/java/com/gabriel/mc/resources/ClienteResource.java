@@ -3,6 +3,7 @@ package com.gabriel.mc.resources;
 
 import com.gabriel.mc.domain.Cliente;
 import com.gabriel.mc.dto.ClienteDTO;
+import com.gabriel.mc.dto.ClienteNewDTO;
 import com.gabriel.mc.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,9 +29,9 @@ public class ClienteResource {
 		return ResponseEntity.ok().body(obj);
 	}
 
-	/*
+
 		@RequestMapping(method = RequestMethod.POST)
-		public ResponseEntity<Void> insert(@Valid @RequestBody ClienteDTO objDto) {
+		public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO objDto) {
 			Cliente obj = service.fromDTO(objDto);
 			obj = service.insert(obj);
 			URI uri = ServletUriComponentsBuilder
@@ -41,7 +42,7 @@ public class ClienteResource {
 
 			return ResponseEntity.created(uri).build();
 		}
-	*/
+
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody ClienteDTO objDto, @PathVariable Integer id) {

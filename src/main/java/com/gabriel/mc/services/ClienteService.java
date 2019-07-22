@@ -1,8 +1,13 @@
 package com.gabriel.mc.services;
 
+import com.gabriel.mc.domain.Cidade;
 import com.gabriel.mc.domain.Cliente;
+import com.gabriel.mc.domain.Endereco;
+import com.gabriel.mc.domain.enums.TipoCliente;
 import com.gabriel.mc.dto.ClienteDTO;
+import com.gabriel.mc.dto.ClienteNewDTO;
 import com.gabriel.mc.repositories.ClienteRepository;
+import com.gabriel.mc.repositories.EnderecoRepository;
 import com.gabriel.mc.services.exceptions.DataIntegrityException;
 import com.gabriel.mc.services.exceptions.ObjecNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +25,9 @@ public class ClienteService {
 	
 	@Autowired
 	private ClienteRepository repo;
+
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	public Cliente find(Integer id) {
 		Cliente obj = repo.findOne(id);
@@ -26,6 +35,14 @@ public class ClienteService {
 			throw new ObjecNotFoundException("Objeto não encontrado! Id: "+ id
 					+ ", Tipo: " + Cliente.class.getName());
 		}
+		return obj;
+	}
+
+	@Transactional
+	public Cliente insert(Cliente obj) {
+		obj.setId(null);
+		obj = repo.save(obj);
+		enderecoRepository.save(obj.getEnderecos());
 		return obj;
 	}
 
@@ -52,6 +69,22 @@ public class ClienteService {
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = new PageRequest(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
 		return repo.findAll(pageRequest);
+	}
+
+	public Cliente fromDTO(ClienteNewDTO objDto) {
+		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(), TipoCliente.toEnum(objDto.getTipo()));
+		Cidade cid = new Cidade(objDto.getCidadeId(), null, null);
+		Endereco end = new Endereco(null,objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(), objDto.getBairro(), objDto.getCep(), cli, cid);
+		cli.getEnderecos().add(end);
+		cli.getTelefones().add(objDto.getTelefone1());
+
+		if (objDto.getTelefone2() != null)
+			cli.getTelefones().add(objDto.getTelefone2());
+
+		if (objDto.getTelefone3() != null)
+			cli.getTelefones().add(objDto.getTelefone3());
+
+		return cli;
 	}
 
 	public Cliente fromDTO(ClienteDTO objDto) {
