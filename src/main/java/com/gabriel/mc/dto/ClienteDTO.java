@@ -1,12 +1,14 @@
 package com.gabriel.mc.dto;
 
 import com.gabriel.mc.domain.Cliente;
+import com.gabriel.mc.services.validation.ClienteUpdate;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.io.Serializable;
 
+@ClienteUpdate
 public class ClienteDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
