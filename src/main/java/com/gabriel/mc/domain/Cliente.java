@@ -29,7 +29,10 @@ public class Cliente {
     private List<Pedido> pedidos = new ArrayList<>();
 
     private String nome;
+
+    @Column(unique = true)
     private String email;
+
     private String cpfOuCnpj;
     private Integer tipo;
 
