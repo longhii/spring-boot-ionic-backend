@@ -4,6 +4,7 @@ import com.gabriel.mc.domain.ItemPedido;
 import com.gabriel.mc.domain.PagamentoComBoleto;
 import com.gabriel.mc.domain.Pedido;
 import com.gabriel.mc.domain.enums.EstadoPagamento;
+import com.gabriel.mc.repositories.ClienteRepository;
 import com.gabriel.mc.repositories.ItemPedidoRepository;
 import com.gabriel.mc.repositories.PagamentoRepository;
 import com.gabriel.mc.repositories.PedidoRepository;
@@ -31,6 +32,9 @@ public class PedidoService {
 
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
+
+	@Autowired
+	private ClienteRepository clienteRepository;
 	
 	public Pedido find(Integer id) {
 		Pedido obj = repo.findOne(id);
@@ -44,6 +48,7 @@ public class PedidoService {
 	@Transactional
 	public Pedido insert(Pedido obj) {
 		obj.setId(null);
+		obj.setCliente(clienteRepository.findOne(obj.getCliente().getId()));
 		obj.setInstante(new Date());
 		obj.getPagamento().setEstado(EstadoPagamento.PENDENTE);
 		obj.getPagamento().setPedido(obj);
@@ -56,10 +61,12 @@ public class PedidoService {
 
 		for (ItemPedido ip : obj.getItens()) {
 			ip.setDesconto(0.0);
+			ip.setProduto(produtoService.find(ip.getProduto().getId()));
 			ip.setPreco(produtoService.find(ip.getProduto().getId()).getPreco());
 			ip.setPedido(obj);
 		}
 		itemPedidoRepository.save(obj.getItens());
+		System.out.println(obj.toString());
 		return obj;
 	}
 }
