@@ -1,6 +1,8 @@
 package com.gabriel.mc.config;
 
 import com.gabriel.mc.services.DBService;
+import com.gabriel.mc.services.EmailService;
+import com.gabriel.mc.services.MockMailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,5 +22,10 @@ public class TestConfig {
         dbService.instantiateTestDatabase();
 
         return true;
+    }
+
+    @Bean
+    public EmailService emailService() {
+        return new MockMailService();
     }
 }
