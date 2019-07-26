@@ -2,9 +2,11 @@ package com.gabriel.mc.services;
 
 import com.gabriel.mc.domain.*;
 import com.gabriel.mc.domain.enums.EstadoPagamento;
+import com.gabriel.mc.domain.enums.Perfil;
 import com.gabriel.mc.domain.enums.TipoCliente;
 import com.gabriel.mc.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -41,6 +43,9 @@ public class DBService {
     @Autowired
     private ItemPedidoRepository itemPedidoRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder pe;
+
 
     public void instantiateTestDatabase() throws ParseException {
         Categoria cat1 = new Categoria(null,"Informática");
@@ -63,7 +68,7 @@ public class DBService {
         Produto p10 = new Produto(null, "Pendente", 180.00);
         Produto p11 = new Produto(null, "Shampoo", 90.00);
 
-        cat1.getProdutos().addAll(Arrays.asList(p1,p2,p3));
+        cat1.getProdutos().addAll(Arrays.asList(p1, p2, p3));
         cat2.getProdutos().addAll(Arrays.asList(p2, p4));
         cat3.getProdutos().addAll(Arrays.asList(p5, p6));
         cat4.getProdutos().addAll(Arrays.asList(p1, p2, p3, p7));
@@ -96,19 +101,26 @@ public class DBService {
         est1.getCidades().addAll(Arrays.asList(cid1));
         est2.getCidades().addAll(Arrays.asList(cid2, cid3));
 
-        estadoRepository.save(Arrays.asList(est1,est2));
-        cidadeRepository.save(Arrays.asList(cid1,cid2,cid3));
+        estadoRepository.save(Arrays.asList(est1, est2));
+        cidadeRepository.save(Arrays.asList(cid1, cid2, cid3));
 
-        Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail", "33345454420", TipoCliente.PESSOAFISICA);
+        Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "33345454420", TipoCliente.PESSOAFISICA, pe.encode("123"));
         cli1.getTelefones().addAll(Arrays.asList("27363355","988586622"));
+
+        Cliente cli2 = new Cliente(null, "Ana Costa", "ana@gmail.com", "39715080065", TipoCliente.PESSOAFISICA, pe.encode("123"));
+        cli2.getTelefones().addAll(Arrays.asList("32450928","988092266"));
+        cli2.addPerfil(Perfil.ADMIN);
 
         Endereco e1 = new Endereco(null, "Rua Flores","300","Apto 303","Jardim", "38240580", cli1, cid1);
         Endereco e2 = new Endereco(null, "Av Matos","105","Sala 800","Centro", "38240580", cli1, cid2);
+        Endereco e3 = new Endereco(null, "Av Floriano","2121","Apto 801","Centro", "36954556", cli2, cid2);
 
-        cli1.getEnderecos().addAll(Arrays.asList(e1,e2));
 
-        clienteRepository.save(Arrays.asList(cli1));
-        enderecoRepository.save(Arrays.asList(e1,e2));
+        cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+        cli2.getEnderecos().addAll(Arrays.asList(e3));
+
+        clienteRepository.save(Arrays.asList(cli1, cli2));
+        enderecoRepository.save(Arrays.asList(e1, e2, e3));
 
         SimpleDateFormat sfd = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
