@@ -1,6 +1,7 @@
 package com.gabriel.mc.config;
 
 import com.gabriel.mc.security.JWTAuthenticationFilter;
+import com.gabriel.mc.security.JWTAuthorizationFilter;
 import com.gabriel.mc.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -58,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated();
         http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
-
+        http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
