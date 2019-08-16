@@ -1,5 +1,6 @@
 package com.gabriel.mc.services;
 
+import com.gabriel.mc.domain.Cliente;
 import com.gabriel.mc.domain.ItemPedido;
 import com.gabriel.mc.domain.PagamentoComBoleto;
 import com.gabriel.mc.domain.Pedido;
@@ -8,8 +9,13 @@ import com.gabriel.mc.repositories.ClienteRepository;
 import com.gabriel.mc.repositories.ItemPedidoRepository;
 import com.gabriel.mc.repositories.PagamentoRepository;
 import com.gabriel.mc.repositories.PedidoRepository;
+import com.gabriel.mc.security.UserSS;
+import com.gabriel.mc.services.exceptions.AuthorizationException;
 import com.gabriel.mc.services.exceptions.ObjecNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,5 +77,16 @@ public class PedidoService {
 		itemPedidoRepository.save(obj.getItens());
 		// emailService.sendOrderConfirmationEmail(obj);
 		return obj;
+	}
+
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		UserSS user = UserService.authenticate();
+
+		if (user == null) {
+			throw new AuthorizationException("Acesso negado.");
+		}
+		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Cliente cliente = clienteRepository.findOne(user.getId());
+		return repo.findByCliente(cliente, pageRequest);
 	}
 }
