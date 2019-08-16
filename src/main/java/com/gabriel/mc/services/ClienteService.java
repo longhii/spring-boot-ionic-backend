@@ -3,11 +3,14 @@ package com.gabriel.mc.services;
 import com.gabriel.mc.domain.Cidade;
 import com.gabriel.mc.domain.Cliente;
 import com.gabriel.mc.domain.Endereco;
+import com.gabriel.mc.domain.enums.Perfil;
 import com.gabriel.mc.domain.enums.TipoCliente;
 import com.gabriel.mc.dto.ClienteDTO;
 import com.gabriel.mc.dto.ClienteNewDTO;
 import com.gabriel.mc.repositories.ClienteRepository;
 import com.gabriel.mc.repositories.EnderecoRepository;
+import com.gabriel.mc.security.UserSS;
+import com.gabriel.mc.services.exceptions.AuthorizationException;
 import com.gabriel.mc.services.exceptions.DataIntegrityException;
 import com.gabriel.mc.services.exceptions.ObjecNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,13 @@ public class ClienteService {
 	private BCryptPasswordEncoder pe;
 	
 	public Cliente find(Integer id) {
+
+		UserSS user = UserService.authenticate();
+
+		if (user == null || !user.hasHole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+
 		Cliente obj = repo.findOne(id);
 		if (obj == null) {
 			throw new ObjecNotFoundException("Objeto não encontrado! Id: "+ id

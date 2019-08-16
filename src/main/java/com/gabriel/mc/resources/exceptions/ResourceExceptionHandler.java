@@ -1,5 +1,6 @@
 package com.gabriel.mc.resources.exceptions;
 
+import com.gabriel.mc.services.exceptions.AuthorizationException;
 import com.gabriel.mc.services.exceptions.DataIntegrityException;
 import com.gabriel.mc.services.exceptions.ObjecNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -36,4 +37,11 @@ public class ResourceExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
+
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<StandardError> authorization(AuthorizationException e, HttpServletRequest request) {
+        StandardError err = new StandardError(HttpStatus.FORBIDDEN.value(), e.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
+    }
+
 }
